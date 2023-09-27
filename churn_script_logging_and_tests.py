@@ -6,7 +6,7 @@ logging.basicConfig(
     filename='./logs/churn_library.log',
     level = logging.INFO,
     filemode='w',
-    format='%(name)s - %(levelname)s - %(message)s')
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 def test_import(import_data):
 	'''
@@ -27,13 +27,17 @@ def test_import(import_data):
 		raise err
 
 
-def test_eda(perform_eda):
+def test_eda(perform_eda, import_data, col):
 	'''
 	test perform eda function
 	'''
+	df = import_data("./data/bank_data.csv")
 	try:
-		df['Churn'].hist()
-	except:
+		perform_eda(df, col)
+		logging.info('Histogram has been plotted')
+	except KeyError as err:
+		logging.error('Ooops! Something happened!')
+		raise err
 		
 
 
