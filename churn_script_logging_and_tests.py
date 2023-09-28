@@ -1,12 +1,14 @@
 import os
 import logging
-import churn_library_solution as cls
+# import churn_library_solution as cls
+
 
 logging.basicConfig(
     filename='./logs/churn_library.log',
     level = logging.INFO,
     filemode='w',
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
 
 def test_import(import_data):
 	'''
@@ -27,17 +29,15 @@ def test_import(import_data):
 		raise err
 
 
-def test_eda(perform_eda, import_data, col):
+def test_eda(perform_eda, df, col):
 	'''
 	test perform eda function
 	'''
-	df = import_data("./data/bank_data.csv")
 	try:
 		perform_eda(df, col)
 		logging.info('Histogram has been plotted')
-	except KeyError as err:
-		logging.error('Ooops! Something happened!')
-		raise err
+	except KeyError:
+		logging.error(f'The {col} column is missing. Failed to plot a graph.')
 		
 
 
@@ -60,8 +60,15 @@ def test_train_models(train_models):
 
 
 if __name__ == "__main__":
-	pass
+	from churn_library import import_data
+	test_import_df = test_import(import_data)	
 
+	from churn_library import perform_eda
+	from churn_library import df
+	test_perform_eda_churn_col = test_eda(perform_eda, df, col='Churn')
+	test_perform_eda_churn_cx_age_col = test_eda(perform_eda, df, col='CustoMer_Age')
+	test_perform_eda_churn_marital_status_col = test_eda(perform_eda, df, col='Marital_Status')
+	test_perform_eda_otal_trans_ct_col = test_eda(perform_eda, df, col='Total_Trans_Ct')
 
 
 

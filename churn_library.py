@@ -48,9 +48,19 @@ def import_data(pth):
     return df
 
 
+# importing the dataset
+df = import_data('data/bank_data.csv')
+
+# dropping extraneous column
+df.drop(labels="Unnamed: 0", axis='columns', inplace=True)
+
+# Adding 'Churn' col based on the Attrition_Flag value
+df['Churn'] = df['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
+df.loc[df['Attrition_Flag'] != 'Existing Customer'].head() 
 
 
-def perform_eda(df):
+def perform_eda(df, col1='Churn', col2='Customer_Age',
+                col3='Marital_Status', col4='Total_Trans_Ct'):
     '''
     perform eda on df and save figures to images folder
     input:
@@ -70,14 +80,14 @@ def perform_eda(df):
     IMAGES_PATH_EDA.mkdir(parents=True, exist_ok=True)
 
     # churn hist
-    plt.hist(df['Churn'])
+    plt.hist(df[col1]) # col1
     plt.xlabel('Churn: 1 - yes, 0  - no')
     plt.ylabel('Number of customers')
     churn_hist_pth = IMAGES_PATH_EDA / 'churn_hist.png'
     plt.savefig(churn_hist_pth, format='png', dpi='figure')
 
     # churn_cx_age
-    plt.hist(df['Customer_Age'])
+    plt.hist(df[col2]) #col2
     plt.xlabel('Customers\' age')
     plt.ylabel('Number of Customers')
     churn_cx_age_pth = IMAGES_PATH_EDA / 'churn_cx_age.png'
@@ -85,12 +95,12 @@ def perform_eda(df):
 
     # churn_marital_status
     plt.ylabel('Number of customers: normalized')
-    df.Marital_Status.value_counts('normalize').plot(kind='bar')
+    df[col3].value_counts('normalize').plot(kind='bar') #col3
     churn_marital_status_pth = IMAGES_PATH_EDA / 'churn_marital_status.png'
     plt.savefig(churn_marital_status_pth, format='png', dpi='figure')
 
     # total_trans_ct
-    sns.histplot(df['Total_Trans_Ct'], stat='density', kde=True)
+    sns.histplot(df[col4], stat='density', kde=True) #col4
     total_trans_ct_pth = IMAGES_PATH_EDA / 'total_trans_ct.png'
     plt.savefig(total_trans_ct_pth, format='png', dpi='figure')
 
@@ -98,6 +108,10 @@ def perform_eda(df):
     sns.heatmap(df.corr(), annot=False, cmap='Dark2_r', linewidths = 2)
     corr_matrix_pth = IMAGES_PATH_EDA / 'corr_matrix.png'
     plt.savefig(corr_matrix_pth, format='png', dpi='figure')
+
+
+# performing eda
+perform_eda(df)
 
 
 def encoder_helper(df, category_lst, response):
@@ -179,7 +193,7 @@ def train_models(X_train, X_test, y_train, y_test):
     pass
 
 
-if __name__ == "__main__":
+'''if __name__ == "__main__":
     # importing the dataset
     df = import_data('data/bank_data.csv')
 
@@ -191,4 +205,4 @@ if __name__ == "__main__":
     df.loc[df['Attrition_Flag'] != 'Existing Customer'].head() 
     
     # performing eda
-    perform_eda(df)
+    perform_eda(df)'''
