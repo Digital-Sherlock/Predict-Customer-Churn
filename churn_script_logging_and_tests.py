@@ -1,5 +1,6 @@
 import os
 import logging
+import pandas as pd
 # import churn_library_solution as cls
 
 
@@ -34,6 +35,12 @@ def test_eda(perform_eda, df, col):
 	test perform eda function
 	'''
 	try:
+		assert isinstance(df, pd.DataFrame)
+		assert isinstance(col, str)
+	except AssertionError:
+		logging.error('Testing perform_eda: data types don\'t match! df has to be pandas DF and col - string.')
+
+	try:
 		perform_eda(df, col)
 		logging.info('Histogram has been plotted')
 	except KeyError:
@@ -45,6 +52,7 @@ def test_encoder_helper(encoder_helper):
 	'''
 	test encoder helper
 	'''
+
 
 
 def test_perform_feature_engineering(perform_feature_engineering):

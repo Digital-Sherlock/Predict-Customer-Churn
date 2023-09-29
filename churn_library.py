@@ -113,8 +113,10 @@ def perform_eda(df, col1='Churn', col2='Customer_Age',
 # performing eda
 perform_eda(df)
 
+y = df['Churn']
+X = pd.DataFrame()
 
-def encoder_helper(df, category_lst, response):
+def encoder_helper(df, category, new_cat_name):
     '''
     helper function to turn each categorical column into a new column with
     propotion of churn for each category - associated with cell 15 from the notebook
@@ -122,12 +124,19 @@ def encoder_helper(df, category_lst, response):
     input:
             df: pandas dataframe
             category_lst: list of columns that contain categorical features
-            response: string of response name [optional argument that could be used for naming variables or index y column]
+            category: column to base the cat-to-num transfomration of
+            new_cat_name: new numerical feature name
 
     output:
             df: pandas dataframe with new columns for
     '''
-    pass
+    numeric_vals_lst = []
+    category_groups = df.groupby(category).mean()['Churn']
+
+    for val in df[category]:
+        numeric_vals_lst.append(category_groups.loc[val])
+
+    df[new_cat_name] = numeric_vals_lst  
 
 
 def perform_feature_engineering(df, response):
