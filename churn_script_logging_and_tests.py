@@ -38,28 +38,48 @@ def test_eda(perform_eda, df, col):
 		assert isinstance(df, pd.DataFrame)
 		assert isinstance(col, str)
 	except AssertionError:
-		logging.error('Testing perform_eda: data types don\'t match! df has to be pandas DF and col - string.')
+		logging.error('Testing perform_eda: incorrect data type! df has to be pandas DF and col - string.')
 
 	try:
 		perform_eda(df, col)
-		logging.info('Histogram has been plotted')
+		logging.info(f'Histogram has been plotted ({col})')
 	except KeyError:
 		logging.error(f'The {col} column is missing. Failed to plot a graph.')
 		
 
 
-def test_encoder_helper(encoder_helper):
+def test_encoder_helper(encoder_helper, category, new_cat_name, df):
 	'''
 	test encoder helper
 	'''
+	try:
+		assert isinstance(category, str)
+		assert isinstance(new_cat_name, str)
+		assert isinstance(df, pd.DataFrame)
+	except AssertionError as err:
+		logging.error('Testing test_encoder_helper(): incorrect data type!')
+		raise err
 
+	try:
+		updated_df = encoder_helper(df, category, new_cat_name)
+		logging.info('Testing test_encoder_helper(): feaures succesfully transformed.')
+	except KeyError as err:
+		logging.error('Testing test_encoder_helper(): df is missing input categorical column!')
+		raise err
+	except ValueError as err:
+		logging.error('Testing test_encoder_helper(): ')
+
+	try:
+		assert updated_df[new_cat_name]
+	except:
+		pass
 
 
 def test_perform_feature_engineering(perform_feature_engineering):
 	'''
 	test perform_feature_engineering
 	'''
-
+	pass
 
 def test_train_models(train_models):
 	'''
@@ -74,7 +94,7 @@ if __name__ == "__main__":
 	from churn_library import perform_eda
 	from churn_library import df
 	test_perform_eda_churn_col = test_eda(perform_eda, df, col='Churn')
-	test_perform_eda_churn_cx_age_col = test_eda(perform_eda, df, col='CustoMer_Age')
+	test_perform_eda_churn_cx_age_col = test_eda(perform_eda, df, col='Customer_Age')
 	test_perform_eda_churn_marital_status_col = test_eda(perform_eda, df, col='Marital_Status')
 	test_perform_eda_otal_trans_ct_col = test_eda(perform_eda, df, col='Total_Trans_Ct')
 

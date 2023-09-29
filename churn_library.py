@@ -62,9 +62,13 @@ df.loc[df['Attrition_Flag'] != 'Existing Customer'].head()
 def perform_eda(df, col1='Churn', col2='Customer_Age',
                 col3='Marital_Status', col4='Total_Trans_Ct'):
     '''
-    perform eda on df and save figures to images folder
+    Performs EDA on df and specified columns and saves figures to images folder.
     input:
             df: pandas dataframe
+            col1: (str) df column (Churn - default)
+            col2: (str) df column (Customer_Age - default)
+            col3: (str) df column (Marital_Status - default)
+            col4: (str) df column (Total_Trans_Ct - default)
 
     output:
             None
@@ -131,12 +135,15 @@ def encoder_helper(df, category, new_cat_name):
             df: pandas dataframe with new columns for
     '''
     numeric_vals_lst = []
-    category_groups = df.groupby(category).mean()['Churn']
+    #category_groups = df.groupby(category).mean()['Churn']
 
-    for val in df[category]:
-        numeric_vals_lst.append(category_groups.loc[val])
+    #for val in df[category]:
+    #    numeric_vals_lst.append(category_groups.loc[val])
 
     df[new_cat_name] = numeric_vals_lst  
+    #print(df[new_cat_name])
+
+encoder_helper(df, 'category', 'new_cat_name')
 
 
 def perform_feature_engineering(df, response):
