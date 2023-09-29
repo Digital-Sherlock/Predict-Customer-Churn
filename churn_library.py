@@ -122,28 +122,38 @@ X = pd.DataFrame()
 
 def encoder_helper(df, category, new_cat_name):
     '''
-    helper function to turn each categorical column into a new column with
-    propotion of churn for each category - associated with cell 15 from the notebook
+    Helper function to turn each categorical column into a new column with
+    propotion of churn for each category.
 
     input:
             df: pandas dataframe
-            category_lst: list of columns that contain categorical features
-            category: column to base the cat-to-num transfomration of
+            category: column to base the cat-to-num transfomration on
             new_cat_name: new numerical feature name
 
     output:
             df: pandas dataframe with new columns for
     '''
     numeric_vals_lst = []
-    #category_groups = df.groupby(category).mean()['Churn']
+    category_groups = df.groupby(category).mean()['Churn']
 
-    #for val in df[category]:
-    #    numeric_vals_lst.append(category_groups.loc[val])
+    for val in df[category]:
+        numeric_vals_lst.append(category_groups.loc[val])
 
-    df[new_cat_name] = numeric_vals_lst  
-    #print(df[new_cat_name])
+    df[new_cat_name] = numeric_vals_lst
+    return df
 
-encoder_helper(df, 'category', 'new_cat_name')
+
+cat_columns = [
+    'Gender',
+    'Education_Level',
+    'Marital_Status',
+    'Income_Category',
+    'Card_Category'                
+]
+
+# encoding cat columns
+for cat in cat_columns:
+    df = encoder_helper(df, cat, f'{cat}_Churn')
 
 
 def perform_feature_engineering(df, response):
