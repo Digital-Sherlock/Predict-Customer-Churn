@@ -74,7 +74,7 @@ def test_perform_feature_engineering(perform_feature_engineering):
 	'''
 	test perform_feature_engineering
 	'''
-	pass
+	
 
 def test_train_models(train_models):
 	'''
@@ -98,6 +98,10 @@ if __name__ == "__main__":
 	from churn_library import encoder_helper, cat_columns
 	for cat in cat_columns:
 		test_encoder_helper(encoder_helper, cat, f'{cat}_Churn', df)
+
+	# testing perform_feature_engineering():
+	from churn_library import perform_feature_engineering
+	test_perform_feature_engineering(perform_feature_engineering(df))
 
 
 

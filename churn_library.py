@@ -117,8 +117,6 @@ def perform_eda(df, col1='Churn', col2='Customer_Age',
 # performing eda
 perform_eda(df)
 
-y = df['Churn']
-X = pd.DataFrame()
 
 def encoder_helper(df, category, new_cat_name):
     '''
@@ -143,31 +141,47 @@ def encoder_helper(df, category, new_cat_name):
     return df
 
 
-cat_columns = [
-    'Gender',
-    'Education_Level',
-    'Marital_Status',
-    'Income_Category',
-    'Card_Category'                
-]
-
-# encoding cat columns
-for cat in cat_columns:
-    df = encoder_helper(df, cat, f'{cat}_Churn')
-
-
-def perform_feature_engineering(df, response):
+def perform_feature_engineering(df):
     '''
     input:
               df: pandas dataframe
-              response: string of response name [optional argument that could be used for naming variables or index y column]
-
     output:
               X_train: X training data
               X_test: X testing data
               y_train: y training data
               y_test: y testing data
     '''
+    cat_columns = [
+        'Gender',
+        'Education_Level',
+        'Marital_Status',
+        'Income_Category',
+        'Card_Category'                
+    ]
+
+    # encoding cat columns
+    for cat in cat_columns:
+        df = encoder_helper(df, cat, f'{cat}_Churn')
+
+    # defining input and output variables
+    X = pd.DataFrame()
+    y = df['Churn']
+
+    # Defining feature set for training data
+    keep_cols = ['Customer_Age', 'Dependent_count', 'Months_on_book',
+        'Total_Relationship_Count', 'Months_Inactive_12_mon',
+        'Contacts_Count_12_mon', 'Credit_Limit', 'Total_Revolving_Bal',
+        'Avg_Open_To_Buy', 'Total_Amt_Chng_Q4_Q1', 'Total_Trans_Amt',
+        'Total_Trans_Ct', 'Total_Ct_Chng_Q4_Q1', 'Avg_Utilization_Ratio',
+        'Gender_Churn', 'Education_Level_Churn', 'Marital_Status_Churn', 
+        'Income_Category_Churn', 'Card_Category_Churn']
+
+    X[keep_cols] = df[keep_cols]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size= 0.3, random_state=42)
+
+    return X_train, X_test, y_train, y_test
+    
+
 
 def classification_report_image(y_train,
                                 y_test,
