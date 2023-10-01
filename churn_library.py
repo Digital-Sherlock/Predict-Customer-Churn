@@ -48,6 +48,11 @@ def import_data(pth):
     return df
 
 
+'''
+Three lines below were moved from if __name__ == "__main__": as
+having them inside would cause testing (i.e. test_perform_eda)
+to fail.
+'''
 # importing the dataset
 df = import_data('data/bank_data.csv')
 
@@ -56,7 +61,6 @@ df.drop(labels="Unnamed: 0", axis='columns', inplace=True)
 
 # Adding 'Churn' col based on the Attrition_Flag value
 df['Churn'] = df['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
-df.loc[df['Attrition_Flag'] != 'Existing Customer'].head() 
 
 
 def perform_eda(df, col1='Churn', col2='Customer_Age',
@@ -114,8 +118,8 @@ def perform_eda(df, col1='Churn', col2='Customer_Age',
     plt.savefig(corr_matrix_pth, format='png', dpi='figure')
 
 
-# performing eda
-perform_eda(df)
+# performing eda 
+# perform_eda(df) << in main block for now
 
 
 def encoder_helper(df, category, new_cat_name):
@@ -141,6 +145,16 @@ def encoder_helper(df, category, new_cat_name):
     return df
 
 
+# identifying cat columns
+cat_columns = [
+        'Gender',
+        'Education_Level',
+        'Marital_Status',
+        'Income_Category',
+        'Card_Category'                
+        ]
+
+
 def perform_feature_engineering(df):
     '''
     input:
@@ -151,14 +165,6 @@ def perform_feature_engineering(df):
               y_train: y training data
               y_test: y testing data
     '''
-    cat_columns = [
-        'Gender',
-        'Education_Level',
-        'Marital_Status',
-        'Income_Category',
-        'Card_Category'                
-    ]
-
     # encoding cat columns
     for cat in cat_columns:
         df = encoder_helper(df, cat, f'{cat}_Churn')
@@ -233,16 +239,9 @@ def train_models(X_train, X_test, y_train, y_test):
     pass
 
 
-'''if __name__ == "__main__":
-    # importing the dataset
-    df = import_data('data/bank_data.csv')
-
-    # dropping extraneous column
-    df.drop(labels="Unnamed: 0", axis='columns', inplace=True)
-
-    # Adding 'Churn' col based on the Attrition_Flag value
-    df['Churn'] = df['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
-    df.loc[df['Attrition_Flag'] != 'Existing Customer'].head() 
-    
+if __name__ == "__main__":
     # performing eda
-    perform_eda(df)'''
+    perform_eda(df)
+
+    # feature engneering and cat encoding
+    perform_feature_engineering(df)
