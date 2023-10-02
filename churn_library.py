@@ -186,7 +186,53 @@ def perform_feature_engineering(df):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size= 0.3, random_state=42)
 
     return X_train, X_test, y_train, y_test
-    
+
+
+# feature engneering and cat encoding
+X_train, X_test, y_train, y_test = perform_feature_engineering(df)
+
+
+def train_models(X_train, X_test, y_train, y_test):
+    '''
+    The function trains models and saves the best ones.
+    input:
+              X_train: X training data
+              X_test: X testing data
+              y_train: y training data
+              y_test: y testing data
+    output:
+              None
+    '''
+    # defining models
+    rfc = RandomForestClassifier(random_state=42)
+    lrc = LogisticRegression(solver='lbfgs', max_iter=3000)
+
+    # defining the parameter grid
+    param_grid = { 
+    'n_estimators': [200, 500],
+    'max_features': ['auto', 'sqrt'],
+    'max_depth' : [4,5,100],
+    'criterion' :['gini', 'entropy']
+    }
+
+    # training rfc via GridSearchCV
+    cv_rfc = GridSearchCV(estimator=rfc, param_grid=param_grid, cv=5)
+    cv_rfc.fit(X_train, y_train)
+
+    # training lrc
+    lrc.fit(X_train, y_train)
+
+    # making predictions for rfc
+    y_train_preds_rf = cv_rfc.best_estimator_.predict(X_train)
+    y_test_preds_rf = cv_rfc.best_estimator_.predict(X_test)
+
+    # making predictions for lrc
+    y_train_preds_lr = lrc.predict(X_train)
+    y_test_preds_lr = lrc.predict(X_test)
+
+    # save best models
+    joblib.dump(cv_rfc.best_estimator_, './models/rfc_model.pkl')
+    joblib.dump(lrc, './models/logistic_model.pkl')
 
 
 def classification_report_image(y_train,
@@ -225,23 +271,11 @@ def feature_importance_plot(model, X_data, output_pth):
     '''
     pass
 
-def train_models(X_train, X_test, y_train, y_test):
-    '''
-    train, store model results: images + scores, and store models
-    input:
-              X_train: X training data
-              X_test: X testing data
-              y_train: y training data
-              y_test: y testing data
-    output:
-              None
-    '''
-    pass
-
 
 if __name__ == "__main__":
     # performing eda
     perform_eda(df)
 
-    # feature engneering and cat encoding
-    perform_feature_engineering(df)
+    # traing models
+    print('The models are training...')
+    train_models(X_train, X_test, y_train, y_test)

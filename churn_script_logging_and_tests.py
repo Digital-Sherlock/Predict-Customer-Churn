@@ -88,10 +88,25 @@ def test_perform_feature_engineering(perform_feature_engineering, df):
 		raise err
 
 
-def test_train_models(train_models):
+def test_train_models(train_models, X_train, X_test, y_train, y_test):
 	'''
 	test train_models
 	'''
+	try:
+		assert isinstance(X_train, pd.DataFrame)
+		assert isinstance(X_test, pd.DataFrame)
+		assert isinstance(y_train, pd.Series)
+		assert isinstance(y_test, pd.Series)
+	except AssertionError as err:
+		logging.error('Testing test_train_models(): Incorrect data type! X_ have to be pd.DataFrame, y_ - pd.Series.')
+		raise err
+	try:
+		train_models(X_train, X_test, y_train, y_test)
+		logging.info('Testing train_models(): models have been succesfully trained.')
+	except FileNotFoundError:
+		logging.error('Testing train_models(): models failed to be saved! Make sure the storage path exists.')
+
+
 
 
 if __name__ == "__main__":
@@ -112,10 +127,6 @@ if __name__ == "__main__":
 	# testing perform_feature_engineering():
 	test_perform_feature_engineering(cl.perform_feature_engineering, cl.df)
 
-
-
-
-
-
-
-
+	# testing train_models()
+	test_train_models(cl.train_models, cl.X_train, cl.X_test, 
+				   cl.y_train, cl.y_test)
