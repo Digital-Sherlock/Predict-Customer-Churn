@@ -82,9 +82,7 @@ def perform_eda(df, col1='Churn', col2='Customer_Age',
     plt.figure(figsize=(10,5))
 
     # place into constants.py
-    IMAGES_PATH_RESULTS  = Path() / "images" / "results"
     IMAGES_PATH_EDA = Path() / "images" / "eda"
-    IMAGES_PATH_RESULTS.mkdir(parents=True, exist_ok=True)
     IMAGES_PATH_EDA.mkdir(parents=True, exist_ok=True)
 
     # churn hist
@@ -116,7 +114,7 @@ def perform_eda(df, col1='Churn', col2='Customer_Age',
     sns.heatmap(df.corr(), annot=False, cmap='Dark2_r', linewidths = 2)
     corr_matrix_pth = IMAGES_PATH_EDA / 'corr_matrix.png'
     plt.savefig(corr_matrix_pth, format='png', dpi='figure')
-
+    plt.close()
 
 # performing eda 
 # perform_eda(df) << in main block for now
@@ -192,6 +190,35 @@ def perform_feature_engineering(df):
 X_train, X_test, y_train, y_test = perform_feature_engineering(df)
 
 
+def classification_report_image(model_name, y_train, y_test,
+                                y_train_preds, y_test_preds):
+    '''
+    produces classification report for training and testing results and stores report as image
+    in images folder
+    input:
+            y_train: training response values
+            y_test:  test response values
+            y_train_preds: training predictions
+            y_test_preds: test predictions
+
+    output:
+             None
+    '''
+    IMAGES_PATH_RESULTS  = Path() / "images" / "results"
+    IMAGES_PATH_RESULTS.mkdir(parents=True, exist_ok=True)
+
+    # scores
+    plt.rc('figure', figsize=(10, 7))
+    plt.text(0.01, 1.08, str(f'{model_name} Train'), {'fontsize': 10}, fontproperties = 'monospace')
+    plt.text(0.01, 0.05, str(classification_report(y_train, y_train_preds)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
+    plt.text(0.01, 0.6, str(f'{model_name} Test'), {'fontsize': 10}, fontproperties = 'monospace')
+    plt.text(0.01, 0.7, str(classification_report(y_test, y_test_preds)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
+    plt.axis('off')
+    class_report = IMAGES_PATH_RESULTS / f'class_report_{model_name}.png'
+    plt.savefig(class_report, format='png', dpi='figure')
+    plt.close()
+
+
 def train_models(X_train, X_test, y_train, y_test):
     '''
     The function trains models and saves the best ones.
@@ -234,28 +261,11 @@ def train_models(X_train, X_test, y_train, y_test):
     joblib.dump(cv_rfc.best_estimator_, './models/rfc_model.pkl')
     joblib.dump(lrc, './models/logistic_model.pkl')
 
-
-def classification_report_image(y_train,
-                                y_test,
-                                y_train_preds_lr,
-                                y_train_preds_rf,
-                                y_test_preds_lr,
-                                y_test_preds_rf):
-    '''
-    produces classification report for training and testing results and stores report as image
-    in images folder
-    input:
-            y_train: training response values
-            y_test:  test response values
-            y_train_preds_lr: training predictions from logistic regression
-            y_train_preds_rf: training predictions from random forest
-            y_test_preds_lr: test predictions from logistic regression
-            y_test_preds_rf: test predictions from random forest
-
-    output:
-             None
-    '''
-    pass
+    # generating classification report
+    classification_report_image('Random Forest', y_train,
+                                y_test, y_train_preds_rf, y_test_preds_rf)
+    classification_report_image('Logistic Regression', y_train,
+                                y_test, y_train_preds_lr, y_test_preds_lr)
 
 
 def feature_importance_plot(model, X_data, output_pth):

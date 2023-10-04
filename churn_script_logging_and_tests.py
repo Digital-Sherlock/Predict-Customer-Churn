@@ -107,8 +107,6 @@ def test_train_models(train_models, X_train, X_test, y_train, y_test):
 		logging.error('Testing train_models(): models failed to be saved! Make sure the storage path exists.')
 
 
-
-
 if __name__ == "__main__":
 	# testing import_data()
 	import churn_library as cl
