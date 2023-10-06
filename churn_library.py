@@ -153,6 +153,11 @@ cat_columns = [
         ]
 
 
+# defining input and output variables
+X = pd.DataFrame()
+y = df['Churn']
+
+
 def perform_feature_engineering(df):
     '''
     input:
@@ -166,10 +171,6 @@ def perform_feature_engineering(df):
     # encoding cat columns
     for cat in cat_columns:
         df = encoder_helper(df, cat, f'{cat}_Churn')
-
-    # defining input and output variables
-    X = pd.DataFrame()
-    y = df['Churn']
 
     # Defining feature set for training data
     keep_cols = ['Customer_Age', 'Dependent_count', 'Months_on_book',
@@ -219,6 +220,64 @@ def classification_report_image(model_name, y_train, y_test,
     plt.close()
 
 
+def feature_importance_plot(model, X_data, output_pth):
+    '''
+    creates and stores the feature importances in pth
+    input:
+            model: model object containing feature_importances_
+            X_data: pandas dataframe of X values
+            output_pth: path to store the figure
+
+    output:
+             None
+    '''
+    # Calculate feature importances
+    importances = model.feature_importances_
+
+    # Sort feature importances in descending order
+    indices = np.argsort(importances)[::-1]
+
+    # Rearrange feature names so they match the sorted feature importances
+    names = [X_data.columns[i] for i in indices]
+
+    # Create plot
+    plt.figure(figsize=(20,7))
+
+    # Create plot title
+    plt.title("Feature Importance")
+    plt.ylabel('Importance')
+
+    # Add bars
+    plt.bar(range(X_data.shape[1]), importances[indices])
+
+    # Add feature names as x-axis labels
+    plt.xticks(range(X_data.shape[1]), names, rotation=90)
+
+    feature_imp_plt = output_pth / 'feature_imp_plt.png'
+    plt.savefig(feature_imp_plt, format='png', dpi='figure');
+
+
+def plot_roc_curves(model1, model2, X_test, y_test,
+                    output_pth):
+    '''
+    Plots ROC curve based on models' performance
+    on a test set.
+    Input:
+        - model: model to plot the ROC curve for
+        - X_test: test dataset inputs
+        - y_test: test dataset labels
+    Output:
+        - none
+    '''
+    plt.figure(figsize=(15, 8))
+    ax = plt.gca()
+    model1_roc_curve = plot_roc_curve(model1, X_test, y_test, ax=ax, alpha=0.8)
+    model2_roc_curve = plot_roc_curve(model2, X_test, y_test, ax=ax, alpha=0.8)
+    roc_curve = output_pth / 'ROC_Curve.png'
+    plt.savefig(roc_curve, format='png', dpi='figure')
+    plt.close()
+
+
 def train_models(X_train, X_test, y_train, y_test):
     '''
     The function trains models and saves the best ones.
@@ -230,6 +289,9 @@ def train_models(X_train, X_test, y_train, y_test):
     output:
               None
     '''
+    IMAGES_PATH_RESULTS  = Path() / "images" / "results"
+    IMAGES_PATH_RESULTS.mkdir(parents=True, exist_ok=True)
+
     # defining models
     rfc = RandomForestClassifier(random_state=42)
     lrc = LogisticRegression(solver='lbfgs', max_iter=3000)
@@ -267,19 +329,11 @@ def train_models(X_train, X_test, y_train, y_test):
     classification_report_image('Logistic Regression', y_train,
                                 y_test, y_train_preds_lr, y_test_preds_lr)
 
+    # plotting and storing roc curve
+    plot_roc_curves(cv_rfc.best_estimator_, lrc, X_test, y_test, IMAGES_PATH_RESULTS)
 
-def feature_importance_plot(model, X_data, output_pth):
-    '''
-    creates and stores the feature importances in pth
-    input:
-            model: model object containing feature_importances_
-            X_data: pandas dataframe of X values
-            output_pth: path to store the figure
-
-    output:
-             None
-    '''
-    pass
+    # plotting and storing feature importance
+    feature_importance_plot(cv_rfc.best_estimator_, X, IMAGES_PATH_RESULTS)
 
 
 if __name__ == "__main__":
