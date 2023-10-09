@@ -10,20 +10,20 @@ Author: Vadim Polovnikov
 
 # importing modules
 from data_operations import ImportData
-from data_operations import CatEncoder
+from data_operations import FeatureEng
 
 # importing constans
 from constants import PATH
 from constants import CAT_COLUMNS
+from constants import KEEP_COLS
 
 
-def data_import(path):
+def import_data(path):
     '''
-    Imports data from path.
+    Imports data from path
 
     Input:
         - path: (str): dataset path
-
     Output:
         - df: (pd.DataFrame) DataFrame
     '''
@@ -31,7 +31,7 @@ def data_import(path):
 
 
 # importing data
-df = data_import(PATH)
+df = import_data(PATH)
 
 # dropping extraneous column
 df.drop(labels="Unnamed: 0", axis='columns', inplace=True)
@@ -40,9 +40,54 @@ df.drop(labels="Unnamed: 0", axis='columns', inplace=True)
 df['Churn'] = df['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
 
 
+def perform_eda():
+    '''
+    Performs EDA and saves images.
+    '''
+    pass
 
+
+def encode_helper(df, cat_columns=CAT_COLUMNS):
+    '''
+    Encodes the categorical features.
+    Input:
+        - df: (pd.DataFrame) dataframe
+        - cat_columns: (lst) list of cat features
+    Output:
+        - df: (pd.DataFrame) transformed df
+    '''
+    # encopding cat features
+    encoded_cats = FeatureEng(df).onehot_encode(cat_columns)
+
+    # dropping cat features
+    df.drop(labels=cat_columns, axis='columns', inplace=True)
+
+    # insterting encoded columns
+    df[encoded_cats.columns] = encoded_cats
+
+    return df
+
+
+def perform_feature_engineering(df):
+    '''
+    Encodes cat features, returns train-test split
+    with selected columns in a dataset.
+    Input:
+        - df: (pd.DataFrame) dataframe
+    Output:
+        - X_train: (arr) X training data
+        - X_test: (arr) X testing data
+        - y_train: (arr) y training data
+        - y_test: (arr) y testing data
+    '''
+    df = encode_helper(df, CAT_COLUMNS)
+    X_train, X_test, y_train, y_test = FeatureEng(df).data_splitter(
+        df,
+        KEEP_COLS,
+        0.3
+    )
+    return X_train, X_test, y_train, y_test
 
 
 if __name__ == '__main__':
-    encoded_features = CatEncoder(df).onehot_encode(CAT_COLUMNS)
-    print(encoded_features)
+    X_train, X_test, y_train, y_test = perform_feature_engineering(df)
