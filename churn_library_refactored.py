@@ -56,7 +56,7 @@ def encode_helper(df, cat_columns=CAT_COLUMNS):
     Output:
         - df: (pd.DataFrame) transformed df
     '''
-    # encopding cat features
+    # onehot-encoding cat features
     encoded_cats = FeatureEng(df).onehot_encode(cat_columns)
 
     # dropping cat features

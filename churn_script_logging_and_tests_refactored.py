@@ -13,6 +13,7 @@ import churn_library_refactored as clr
 
 from constants import PATH
 from constants import CAT_COLUMNS
+from constants import KEEP_COLS
 
 
 logging.basicConfig(
@@ -27,21 +28,22 @@ def test_import_data(import_data, path=PATH):
     Testing import_data.
 
     Input:
-        - import_data: (func) data_import function
+        - import_data: (func) import_data function
     Output:
         - None
     '''
     try:
         assert isinstance(path, str)
     except AssertionError as err:
-       logging.error('Wrong data type for data import path. Exepcting string.')
+       logging.error('''Testing import_data(): wrong data type for data import path.
+                     Exepcting string.''')
        raise err
     
     try:
         import_data(path)
-        logging.info('Successful data import.')
+        logging.info('Testing import_data(): successful data import.')
     except FileNotFoundError as err:
-        logging.error('Path is not found!')
+        logging.error('Testing import_data(): path is not found!')
         raise err
 
 
@@ -59,21 +61,50 @@ def test_encode_helper(encode_helper, df, cat_columns=CAT_COLUMNS):
         assert isinstance(df, pd.DataFrame)
         assert isinstance(cat_columns, list)
     except AssertionError as err:
-        logging.error('Wrong data type! Make sure pd.DataFrame and list of cat features are supplied.')
+        logging.error('''Testing test_encode_helper(): wrong data type!
+                      Make sure pd.DataFrame and list of cat features are supplied.''')
         
     try:
         encode_helper(df, cat_columns)
-        logging.info('Categories successfully encoded.')
+        logging.info('Testing test_encode_helper(): categories successfully encoded.')
     except KeyError as err:
-        logging.error('Supplied list of columns doesn\'t match df columns.')
+        logging.error('''Testing test_encode_helper(): supplied list of columns
+                      doesn\'t match df columns.''')
         raise err
 
 
+def test_perform_feature_engineering(perform_feature_engineering, df):
+    '''
+    Tests perform_feature_engineering() function.
+    '''
+    try:
+        assert isinstance(df, pd.DataFrame)
+    except AssertionError as err:
+        logging.error('''Testing perform_feature_engineering(): make sure the
+                      input dataset is of pd.DataFrame format.''')
+        raise err
+
+    try:
+        X_train, X_test, y_train, y_test = perform_feature_engineering(df)
+        assert len(X_train.columns) and len(X_test.columns) == len(KEEP_COLS)
+        logging.info('''Testing perform_feature_engineering(): feature engineering
+                     successfully performed.''')
+    except KeyError as err:
+        logging.error('''Testing perform_feature_engineering(): make sure "Churn" column
+                      is present in the input dataset.''')
+        raise err
+    except AssertionError as err:
+        logging.error('''Testing perform_feature_engineering(): wrong number of columns!
+                      Output dataset columns should be equal to KEEP_COLS.''')
+        raise err
 
 
 if __name__ == "__main__":
-    # testing data_import
-    test_import_data(clr.data_import, PATH)
+    # testing import_data
+    test_import_data(clr.import_data, PATH)
 
     # testing data encoding
     test_encode_helper(clr.encode_helper, clr.df, CAT_COLUMNS)
+
+    # testing perform_feature_engineering()
+    test_perform_feature_engineering(clr.perform_feature_engineering, clr.df)
