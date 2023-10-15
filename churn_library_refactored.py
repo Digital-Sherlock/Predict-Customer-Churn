@@ -47,7 +47,7 @@ def perform_eda():
     pass
 
 
-def encode_helper(df, cat_columns=CAT_COLUMNS):
+def encode_helper(dataset, cat_columns=CAT_COLUMNS):
     '''
     Encodes the categorical features.
     Input:
@@ -57,18 +57,18 @@ def encode_helper(df, cat_columns=CAT_COLUMNS):
         - df: (pd.DataFrame) transformed df
     '''
     # onehot-encoding cat features
-    encoded_cats = FeatureEng(df).onehot_encode(cat_columns)
+    encoded_cats = FeatureEng(dataset).onehot_encode(cat_columns)
 
     # dropping cat features
-    df.drop(labels=cat_columns, axis='columns', inplace=True)
+    dataset = dataset.drop(labels=cat_columns, axis='columns')
 
     # insterting encoded columns
-    df[encoded_cats.columns] = encoded_cats
+    dataset[encoded_cats.columns] = encoded_cats
 
-    return df
+    return dataset
 
 
-def perform_feature_engineering(df):
+def perform_feature_engineering(dataset):
     '''
     Encodes cat features, returns train-test split
     with selected columns in a dataset.
@@ -80,9 +80,9 @@ def perform_feature_engineering(df):
         - y_train: (arr) y training data
         - y_test: (arr) y testing data
     '''
-    df = encode_helper(df, CAT_COLUMNS)
-    X_train, X_test, y_train, y_test = FeatureEng(df).data_splitter(
-        df,
+    dataset = encode_helper(dataset, CAT_COLUMNS)
+    X_train, X_test, y_train, y_test = FeatureEng(dataset).data_splitter(
+        dataset,
         KEEP_COLS,
         0.3
     )

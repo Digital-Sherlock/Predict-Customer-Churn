@@ -68,8 +68,8 @@ def test_encode_helper(encode_helper, df, cat_columns=CAT_COLUMNS):
         encode_helper(df, cat_columns)
         logging.info('Testing test_encode_helper(): categories successfully encoded.')
     except KeyError as err:
-        logging.error('''Testing test_encode_helper(): supplied list of columns
-                      doesn\'t match df columns.''')
+        logging.error('''Testing test_encode_helper(): onehot_encode() failed! Supplied list of cat columns
+                      doesn\'t match input dataset columns.''')
         raise err
 
 
@@ -80,18 +80,19 @@ def test_perform_feature_engineering(perform_feature_engineering, df):
     try:
         assert isinstance(df, pd.DataFrame)
     except AssertionError as err:
-        logging.error('''Testing perform_feature_engineering(): make sure the
-                      input dataset is of pd.DataFrame format.''')
+        logging.error('''Testing test_encode_helper(): wrong data type!
+                      Make sure to supply pd.DataFrame.''')
         raise err
 
     try:
         X_train, X_test, y_train, y_test = perform_feature_engineering(df)
+        # checking num of cols in dataset
         assert len(X_train.columns) and len(X_test.columns) == len(KEEP_COLS)
         logging.info('''Testing perform_feature_engineering(): feature engineering
                      successfully performed.''')
     except KeyError as err:
-        logging.error('''Testing perform_feature_engineering(): make sure "Churn" column
-                      is present in the input dataset.''')
+        logging.error('''Testing perform_feature_engineering(): data_splitter() failed! Make sure
+                      "Churn" column is present in the input dataset.''')
         raise err
     except AssertionError as err:
         logging.error('''Testing perform_feature_engineering(): wrong number of columns!
@@ -103,8 +104,8 @@ if __name__ == "__main__":
     # testing import_data
     test_import_data(clr.import_data, PATH)
 
-    # testing data encoding
-    test_encode_helper(clr.encode_helper, clr.df, CAT_COLUMNS)
+    # testing encode_helper
+    test_encode_helper(clr.encode_helper, clr.df)
 
     # testing perform_feature_engineering()
     test_perform_feature_engineering(clr.perform_feature_engineering, clr.df)

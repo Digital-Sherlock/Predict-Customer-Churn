@@ -65,7 +65,6 @@ class FeatureEng():
             categories
         '''        
         # dataframe comprised of only cat features
-        print(self.df.columns)
         categories = self.df[categories]
 
         cat_encoder = OneHotEncoder(sparse=False)
