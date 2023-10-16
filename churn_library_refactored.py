@@ -11,11 +11,14 @@ Author: Vadim Polovnikov
 # importing modules
 from data_operations import ImportData
 from data_operations import FeatureEng
+from data_operations import EDA
+from pathlib import Path
 
 # importing constans
 from constants import PATH
 from constants import CAT_COLUMNS
 from constants import KEEP_COLS
+from constants import IMAGES_PATH_EDA, IMAGES_PATH_RESULTS
 
 
 def import_data(path):
@@ -40,11 +43,16 @@ df.drop(labels="Unnamed: 0", axis='columns', inplace=True)
 df['Churn'] = df['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
 
 
-def perform_eda():
+def perform_eda(col, kind, xlabel, ylabel,
+                PATH, filename):
     '''
     Performs EDA and saves images.
     '''
-    pass
+    path = Path() / "images" / "eda"
+    plot = EDA(df)
+    plot.plotter(col, kind, xlabel, ylabel,
+                PATH, filename)
+
 
 
 def encode_helper(dataset, cat_columns=CAT_COLUMNS):
@@ -91,3 +99,5 @@ def perform_feature_engineering(dataset):
 
 if __name__ == '__main__':
     X_train, X_test, y_train, y_test = perform_feature_engineering(df)
+    perform_eda('Churn', 'hist', 'Churn: 1 - yes, 0  - no',
+                 'Number of customers', IMAGES_PATH_EDA, 'churn_hist.png')

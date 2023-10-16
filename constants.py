@@ -1,3 +1,5 @@
+from pathlib import Path
+
 PATH = 'data/bank_data.csv'
 CAT_COLUMNS = [
         'Gender',
@@ -22,3 +24,6 @@ KEEP_COLS = ['Customer_Age', 'Dependent_count',
        'Income_Category_Less than $40K', 'Income_Category_Unknown',
        'Card_Category_Blue', 'Card_Category_Gold', 'Card_Category_Platinum',
        'Card_Category_Silver']
+
+IMAGES_PATH_EDA = Path() / "images" / "eda"
+IMAGES_PATH_RESULTS  = Path() / "images" / "results"

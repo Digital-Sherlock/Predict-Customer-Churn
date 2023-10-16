@@ -20,6 +20,7 @@ import pandas as pd
 from pathlib import Path
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 
 
 class ImportData():
@@ -100,3 +101,30 @@ class FeatureEng():
                                                             random_state=self.__seed)
         
         return X_train, X_test, y_train, y_test
+    
+
+class EDA():
+    '''
+    Performs EDA on a given dataset
+    '''
+    def __init__(self, dataset):
+        self.dataset = dataset
+
+    def plotter(self, col, kind, xlabel,
+                ylabel, PATH, filename):
+        '''
+        Creates and stores EDA images.
+        Input:
+            - col: (str) dataset column
+            - kind: (str) plot kind
+            - xlabel, ylabel: (str) axis labels
+            - path: (str) path for image storage 
+        '''
+        # storing images
+        PATH.mkdir(parents=True, exist_ok=True)
+
+        self.dataset[col].plot(kind=kind)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        image_name = PATH / filename
+        plt.savefig(image_name, format='png', dpi='figure')
