@@ -14,6 +14,7 @@ import churn_library_refactored as clr
 from constants import PATH
 from constants import CAT_COLUMNS
 from constants import KEEP_COLS
+from constants import IMAGES_PATH_EDA
 
 
 logging.basicConfig(
@@ -106,7 +107,8 @@ def test_perform_feature_engineering(perform_feature_engineering, df):
         raise err
 
 
-def test_perform_eda(perform_eda, df):
+def test_perform_eda(perform_eda, col, type, filename,
+                     PATH=IMAGES_PATH_EDA, **kwargs):
     '''
     Tests perform_eda.
     Input:
@@ -116,18 +118,12 @@ def test_perform_eda(perform_eda, df):
         - None
     '''
     try:
-        assert isinstance(df, pd.DataFrame)
-    except AssertionError as err:
-        logging.error('''Testig perform_eda(): Wrong type! Make sure pd.Dataframe
-                      is supplied.''')
-    # testing perform_eda()
-    # give it a test two times so both mplotter and splotter are tesed
-    try:
-        pass
-    except:
-        pass
+        perform_eda(col, type, filename, PATH, **kwargs)
+        logging.info('Testing perform_eda(): Plots have been successfully saved.')
+    except KeyError:
+        logging.error('Testing perform_eda(): Supplied column is missing in the dataset.')
         
-    
+        
 if __name__ == "__main__":
     # testing import_data
     test_import_data(clr.import_data, PATH)
@@ -139,4 +135,31 @@ if __name__ == "__main__":
     test_perform_feature_engineering(clr.perform_feature_engineering, clr.df)
 
     # testing perform_eda
-    test_perform_eda(clr.perform_eda, clr.df)
+    test_perform_eda(
+                    clr.perform_eda,
+                    col='Churn',
+                    type='matplotlib',
+                    filename='churn_hist.png',
+                    kind='hist',
+                    xlabel='Churn: 1 - yes, 0  - no',
+                    ylabel='Number of customers')
+    test_perform_eda(
+                    clr.perform_eda,
+                    col='Customer_Age',
+                    type='matplotlib',
+                    filename='churn_cx_age.png',
+                    kind='hist',
+                    xlabel='Customers\' age',
+                    ylabel='Number of Customers')
+    test_perform_eda(
+                    clr.perform_eda,
+                    col='Total_Trans_Ct',
+                    type='sns',
+                    kind='histplot',
+                    filename='total_trans_ct.png',)
+    test_perform_eda(
+                    clr.perform_eda,
+                    col='N/A',
+                    type='sns',
+                    kind='corr',
+                    filename='corr_matrix.png',)
