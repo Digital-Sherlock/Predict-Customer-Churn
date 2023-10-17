@@ -52,10 +52,11 @@ def test_encode_helper(encode_helper, df, cat_columns=CAT_COLUMNS):
     Testing encode_helper.
 
     Input:
+        - encode_helper: (func) encode_helper function
         - df: (pd.DataFrame) dataframe
         - cat_columns: (lst) list of cat columns
     Output:
-        - df: (pd.DataFrame) df with onehot-encoded features
+        - None
     '''
     try:
         assert isinstance(df, pd.DataFrame)
@@ -76,6 +77,11 @@ def test_encode_helper(encode_helper, df, cat_columns=CAT_COLUMNS):
 def test_perform_feature_engineering(perform_feature_engineering, df):
     '''
     Tests perform_feature_engineering() function.
+    Input:
+        - perform_feature_engineering: (func) function tested
+        - df: (pd.DataFrame) df
+    Output:
+        - None
     '''
     try:
         assert isinstance(df, pd.DataFrame)
@@ -100,6 +106,28 @@ def test_perform_feature_engineering(perform_feature_engineering, df):
         raise err
 
 
+def test_perform_eda(perform_eda, df):
+    '''
+    Tests perform_eda.
+    Input:
+        - perform_eda: (func) tested function
+        - df: (pd.DataFrame) df
+    Output:
+        - None
+    '''
+    try:
+        assert isinstance(df, pd.DataFrame)
+    except AssertionError as err:
+        logging.error('''Testig perform_eda(): Wrong type! Make sure pd.Dataframe
+                      is supplied.''')
+    # testing perform_eda()
+    # give it a test two times so both mplotter and splotter are tesed
+    try:
+        pass
+    except:
+        pass
+        
+    
 if __name__ == "__main__":
     # testing import_data
     test_import_data(clr.import_data, PATH)
@@ -109,3 +137,6 @@ if __name__ == "__main__":
 
     # testing perform_feature_engineering()
     test_perform_feature_engineering(clr.perform_feature_engineering, clr.df)
+
+    # testing perform_eda
+    test_perform_eda(clr.perform_eda, clr.df)

@@ -20,6 +20,8 @@ from constants import CAT_COLUMNS
 from constants import KEEP_COLS
 from constants import IMAGES_PATH_EDA, IMAGES_PATH_RESULTS
 
+# importing libraries
+import matplotlib.pyplot as plt
 
 def import_data(path):
     '''
@@ -43,16 +45,29 @@ df.drop(labels="Unnamed: 0", axis='columns', inplace=True)
 df['Churn'] = df['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
 
 
-def perform_eda(col, kind, xlabel, ylabel,
-                PATH, filename):
+def perform_eda(col, type, filename, PATH=IMAGES_PATH_EDA, **kwargs):
     '''
     Performs EDA and saves images.
+    Input:
+        - col: (str) column name
+        - type: (str) plot type (library used for plotting)
+        - filename: (str) image name
+        - PATH: (pathlib.PosixPath) path to save an image to
+    Output:
+     - None
     '''
-    path = Path() / "images" / "eda"
-    plot = EDA(df)
-    plot.plotter(col, kind, xlabel, ylabel,
-                PATH, filename)
-
+    if type == 'matplotlib':
+        plot = EDA(df, PATH)
+        plot.mplotter(col=col,
+                      kind=kwargs['kind'],
+                      xlabel=kwargs['xlabel'],
+                      ylabel=kwargs['ylabel'],
+                      filename=filename)
+    else:
+        plot = EDA(df, PATH)
+        plot.splotter(kind=kwargs['kind'],
+                      filename=filename,
+                      col=col)
 
 
 def encode_helper(dataset, cat_columns=CAT_COLUMNS):
@@ -99,5 +114,33 @@ def perform_feature_engineering(dataset):
 
 if __name__ == '__main__':
     X_train, X_test, y_train, y_test = perform_feature_engineering(df)
-    perform_eda('Churn', 'hist', 'Churn: 1 - yes, 0  - no',
-                 'Number of customers', IMAGES_PATH_EDA, 'churn_hist.png')
+    perform_eda(col='Churn',
+                type='matplotlib',
+                filename='churn_hist.png',
+                kind='hist',
+                xlabel='Churn: 1 - yes, 0  - no',
+                ylabel='Number of customers')
+    perform_eda(col='Customer_Age',
+                type='matplotlib',
+                filename='churn_cx_age.png',
+                kind='hist',
+                xlabel='Customers\' age',
+                ylabel='Number of Customers')
+    
+    # edge case
+    plt.figure(figsize=(10,7))
+    plt.ylabel('Number of customers: normalized')
+    df['Marital_Status'].value_counts('normalize').plot(kind='bar')
+    churn_marital_status_pth = IMAGES_PATH_EDA / 'churn_marital_status.png'
+    plt.savefig(churn_marital_status_pth, format='png', dpi='figure');
+
+    perform_eda(col='Total_Trans_Ct',
+                type='sns',
+                kind='histplot',
+                filename='total_trans_ct.png',)
+    perform_eda(col='N/A',
+                type='sns',
+                kind='corr',
+                filename='corr_matrix.png',)
+
+

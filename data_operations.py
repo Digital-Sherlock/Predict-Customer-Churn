@@ -21,6 +21,7 @@ from pathlib import Path
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
+import seaborn as sns; sns.set()
 
 
 class ImportData():
@@ -107,24 +108,47 @@ class EDA():
     '''
     Performs EDA on a given dataset
     '''
-    def __init__(self, dataset):
+    def __init__(self, dataset, PATH):
         self.dataset = dataset
+        self.PATH = PATH
+        PATH.mkdir(parents=True, exist_ok=True)
+        plt.figure(figsize=(10,8))
 
-    def plotter(self, col, kind, xlabel,
-                ylabel, PATH, filename):
+    def mplotter(self, col, kind, xlabel,
+                ylabel, filename):
         '''
-        Creates and stores EDA images.
+        Creates and stores EDA images using
+        matplotlib library.
         Input:
             - col: (str) dataset column
             - kind: (str) plot kind
             - xlabel, ylabel: (str) axis labels
             - path: (str) path for image storage 
+        Output:
+            - None
         '''
-        # storing images
-        PATH.mkdir(parents=True, exist_ok=True)
-
         self.dataset[col].plot(kind=kind)
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
-        image_name = PATH / filename
-        plt.savefig(image_name, format='png', dpi='figure')
+        image_name = self.PATH / filename
+        plt.savefig(image_name, format='png', dpi='figure');
+
+    def splotter(self, kind, filename, **kwargs):
+        '''
+        Creates and stores EDA images using
+        seaborn library.
+        Input:
+            - kind: (str) kind of plot
+            - PATH: (str) path to save the file
+            - filename: (str) image name
+        Output:
+            - None
+        '''
+        if kind == 'histplot':
+            sns.histplot(self.dataset[kwargs['col']], stat='density', kde=True)
+        else:
+            sns.heatmap(self.dataset.corr(), annot=False, cmap='Dark2_r', linewidths = 2)
+
+        # saving images
+        image_name = self.PATH / filename
+        plt.savefig(image_name, format='png', dpi='figure');
