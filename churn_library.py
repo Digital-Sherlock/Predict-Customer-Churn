@@ -152,6 +152,10 @@ cat_columns = [
         'Card_Category'                
         ]
 
+# defining input and output variables
+X = pd.DataFrame()
+y = df['Churn']
+
 
 def perform_feature_engineering(df):
     '''
@@ -166,10 +170,6 @@ def perform_feature_engineering(df):
     # encoding cat columns
     for cat in cat_columns:
         df = encoder_helper(df, cat, f'{cat}_Churn')
-
-    # defining input and output variables
-    X = pd.DataFrame()
-    y = df['Churn']
 
     # Defining feature set for training data
     keep_cols = ['Customer_Age', 'Dependent_count', 'Months_on_book',
