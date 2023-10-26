@@ -83,7 +83,7 @@ class ModelOps():
         names = [X.columns[i] for i in indices]
 
         # Create plot
-        plt.figure(figsize=(20,8))
+        plt.figure(figsize=(15,15))
 
         # Create plot title
         plt.title("Feature Importance")

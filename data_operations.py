@@ -112,7 +112,7 @@ class EDA():
         self.dataset = dataset
         self.PATH = PATH
         PATH.mkdir(parents=True, exist_ok=True)
-        plt.figure(figsize=(10,8))
+        plt.figure(figsize=(17,17))
 
     def mplotter(self, col, kind, xlabel,
                 ylabel, filename):
@@ -131,7 +131,8 @@ class EDA():
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
         image_name = self.PATH / filename
-        plt.savefig(image_name, format='png', dpi='figure');
+        plt.savefig(image_name, format='png', dpi='figure')
+        plt.close()
 
     def splotter(self, kind, filename, **kwargs):
         '''
@@ -151,4 +152,5 @@ class EDA():
 
         # saving images
         image_name = self.PATH / filename
-        plt.savefig(image_name, format='png', dpi='figure');
+        plt.savefig(image_name, format='png', dpi='figure')
+        plt.close()

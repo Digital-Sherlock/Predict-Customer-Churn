@@ -262,16 +262,17 @@ if __name__ == '__main__':
     plt.ylabel('Number of customers: normalized')
     df['Marital_Status'].value_counts('normalize').plot(kind='bar')
     churn_marital_status_pth = IMAGES_PATH_EDA / 'churn_marital_status.png'
-    plt.savefig(churn_marital_status_pth, format='png', dpi='figure');
+    plt.savefig(churn_marital_status_pth, format='png', dpi='figure')
+    plt.close()
 
     perform_eda(col='Total_Trans_Ct',
                 type='sns',
                 kind='histplot',
-                filename='total_trans_ct.png',)
+                filename='total_trans_ct.png')
     perform_eda(col='N/A',
                 type='sns',
                 kind='corr',
-                filename='corr_matrix.png',)
+                filename='corr_matrix.png')
     
     # training models
     train_models(X_train, X_test, y_train, y_test)
