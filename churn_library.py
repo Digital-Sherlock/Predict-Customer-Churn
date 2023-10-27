@@ -48,11 +48,6 @@ def import_data(pth):
     return df
 
 
-'''
-Three lines below were moved from if __name__ == "__main__": as
-having them inside would cause testing (i.e. test_perform_eda)
-to fail.
-'''
 # importing the dataset
 df = import_data('data/bank_data.csv')
 
@@ -116,9 +111,6 @@ def perform_eda(df, col1='Churn', col2='Customer_Age',
     plt.savefig(corr_matrix_pth, format='png', dpi='figure')
     plt.close()
 
-# performing eda 
-# perform_eda(df) << in main block for now
-
 
 def encoder_helper(df, category, new_cat_name):
     '''
@@ -151,6 +143,10 @@ cat_columns = [
         'Income_Category',
         'Card_Category'                
         ]
+
+# defining input and output variables
+X = pd.DataFrame()
+y = df['Churn']
 
 
 # defining input and output variables
