@@ -110,13 +110,18 @@ def perform_feature_engineering(dataset):
         - y_train: (arr) y training data
         - y_test: (arr) y testing data
     '''
+    # one-hot encoding data
     dataset = encode_helper(dataset, CAT_COLUMNS)
+    # splitting the data
     X_train, X_test, y_train, y_test = FeatureEng(dataset).data_splitter(
         dataset,
         KEEP_COLS,
         0.3
     )
     return X_train, X_test, y_train, y_test
+
+
+X_train, X_test, y_train, y_test = perform_feature_engineering(df)
 
 
 def classification_report_image(model, model_name, y_train, y_test,
@@ -242,8 +247,6 @@ def train_models(X_train, X_test, y_train, y_test):
 
 
 if __name__ == '__main__':
-    X_train, X_test, y_train, y_test = perform_feature_engineering(df)
-
     perform_eda(col='Churn',
                 type='matplotlib',
                 filename='churn_hist.png',

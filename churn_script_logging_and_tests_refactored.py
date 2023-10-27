@@ -70,8 +70,8 @@ def test_encode_helper(encode_helper, df, cat_columns=CAT_COLUMNS):
         encode_helper(df, cat_columns)
         logging.info('Testing test_encode_helper(): categories successfully encoded.')
     except KeyError as err:
-        logging.error('''Testing test_encode_helper(): onehot_encode() failed! Supplied list of cat columns
-                      doesn\'t match input dataset columns.''')
+        logging.error('''Testing test_encode_helper(): onehot_encode() failed!
+                      Supplied list of cat columns doesn\'t match input dataset columns.''')
         raise err
 
 
@@ -123,7 +123,32 @@ def test_perform_eda(perform_eda, col, type, filename,
     except KeyError:
         logging.error('Testing perform_eda(): Supplied column is missing in the dataset.')
         
-        
+
+def test_train_models(train_models, X_train, X_test, y_train, y_test):
+    '''
+    Tests train_models.
+    Input:
+        - train_models: (func) tested function
+        - X_train, X_test, y_train, y_test: (pd.Series) training-test data
+    Output:
+        - None
+    '''
+    try:
+        assert isinstance(X_train, pd.DataFrame)
+        assert isinstance(X_test, pd.DataFrame)
+        assert isinstance(y_train, pd.Series)
+        assert isinstance(y_test, pd.Series)
+    except AssertionError as err:
+        logging.error('''Testing test_train_models(): Incorrect data type!
+                      X_ have to be pd.DataFrame, y_ - pd.Series.''')
+        raise err
+    try:
+        train_models(X_train, X_test, y_train, y_test)
+        logging.info('Testing train_models(): models have been succesfully trained.')
+    except FileNotFoundError:
+	    logging.error('Testing train_models(): models failed to be saved! Make sure the storage path exists.')
+
+
 if __name__ == "__main__":
     # testing import_data
     test_import_data(clr.import_data, PATH)
@@ -163,3 +188,7 @@ if __name__ == "__main__":
                     type='sns',
                     kind='corr',
                     filename='corr_matrix.png',)
+    
+    # testing train_models
+    from churn_library_refactored import X_train, X_test, y_train, y_test
+    test_train_models(clr.train_models, X_train, X_test, y_train, y_test)

@@ -57,10 +57,10 @@ class ModelOps():
 
         # generating a class report
         plt.rc('figure', figsize=(10, 7))
-        plt.text(0.01, 1.08, str(f'{model_name} Train'), {'fontsize': 10}, fontproperties = 'monospace')
-        plt.text(0.01, 0.05, str(classification_report(y_train, y_train_preds)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
-        plt.text(0.01, 0.6, str(f'{model_name} Test'), {'fontsize': 10}, fontproperties = 'monospace')
-        plt.text(0.01, 0.7, str(classification_report(y_test, y_test_preds)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
+        plt.text(0.01, 1.00, str(f'{model_name} Train'), {'fontsize': 10}, fontproperties = 'monospace')
+        plt.text(0.01, 0.70, str(classification_report(y_train, y_train_preds)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
+        plt.text(0.01, 0.55, str(f'{model_name} Test'), {'fontsize': 10}, fontproperties = 'monospace')
+        plt.text(0.01, 0.25, str(classification_report(y_test, y_test_preds)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
         plt.axis('off')
         class_report = PATH / f'class_report_{model_name}.png'
         plt.savefig(class_report, format='png', dpi='figure')
@@ -68,7 +68,8 @@ class ModelOps():
 
     def feature_importance(self, X, save_path):
         '''
-        Creates and stores the feature importances under the supplied path.
+        Creates and stores the feature importance plot under
+        the supplied path.
         Input:
             - X: pandas dataframe of X values
         Output:

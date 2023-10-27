@@ -2,7 +2,7 @@
 The module is one among others that extend churn_library.py by coverting each
 function into a class.
 
-This particular module performs data operations and combines functionnalities of
+This particular module performs data operations and combines functionalities of
 the following churn_library.py functions:
 1) import_data
 2) encoder_helper
@@ -42,13 +42,8 @@ class ImportData():
 
 class FeatureEng():
     '''
-    Takes categories and onehot-encodes them.
-    
-    Input:
-        - dataset: (pd.DataFrame) DataFrame
-        - categories: (lst) categories list
-    Output:
-        - df: (pd.DataFrame): updated dataframe
+    Encodes categories and splits data into
+    train/test sets.
     '''
     def __init__(self, df):
         self.df = df
@@ -73,15 +68,16 @@ class FeatureEng():
         cat_encoded = cat_encoder.fit_transform(categories)
 
         # dataframe comprised of onehot-encoded cat features
-        df_cat_encoded = pd.DataFrame(cat_encoded, columns=cat_encoder.get_feature_names_out(),
-                          index=self.df.index)
+        df_cat_encoded = pd.DataFrame(cat_encoded,
+                                    columns=cat_encoder.get_feature_names_out(),
+                                    index=self.df.index)
         
         return df_cat_encoded
     
 
     def data_splitter(self, df, cols, test_size):
         '''
-        Modifies datasets to include passed columns.\
+        Modifies datasets to include passed columns.
         Splits the data for the given dataset.
         Input:
             - df: (pd.DataFrame) df to split
@@ -92,10 +88,11 @@ class FeatureEng():
             - y_train: (arr) y training data
             - y_test: (arr) y testing data
         '''
-        # defining input and output variables
+        # defining input and target variables
         X = pd.DataFrame()
         y = df['Churn']
 
+        # insterting df columns into X DataFrame
         X[cols] = df[cols]
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = test_size,
@@ -106,7 +103,7 @@ class FeatureEng():
 
 class EDA():
     '''
-    Performs EDA on a given dataset
+    Performs EDA on a given dataset.
     '''
     def __init__(self, dataset, PATH):
         self.dataset = dataset
