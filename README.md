@@ -21,6 +21,8 @@ Final version of the project will provide with the following results:
 - Constants for refactored script (contstants.py)
 - Module dedicated for data importing, encoding, and EDA (data_operations.py)
 - Module for model training, saving, and prediction analysis (model_training.py)
+- Saved models (models/)
+- Testing logs (logs/)
 
 ## Running Files
 
