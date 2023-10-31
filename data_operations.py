@@ -14,14 +14,13 @@ Author: Vadim Polovnikov
 
 # import libraries
 import os
-os.environ['QT_QPA_PLATFORM']='offscreen'
-
 import pandas as pd
-from pathlib import Path
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
-import seaborn as sns; sns.set()
+import seaborn as sns
+sns.set()
+os.environ['QT_QPA_PLATFORM']='offscreen'
 
 
 class ImportData():
@@ -38,7 +37,7 @@ class ImportData():
 
     def import_from_csv(self):
         return pd.read_csv(self.path)
-    
+
 
 class FeatureEng():
     '''
@@ -60,7 +59,7 @@ class FeatureEng():
         Output:
             - df_cat_encoded: (pd.DataFrame) dataframe of encoded
             categories
-        '''        
+        '''
         # dataframe comprised of only cat features
         categories = self.df[categories]
 
@@ -71,9 +70,9 @@ class FeatureEng():
         df_cat_encoded = pd.DataFrame(cat_encoded,
                                     columns=cat_encoder.get_feature_names_out(),
                                     index=self.df.index)
-        
+
         return df_cat_encoded
-    
+
 
     def data_splitter(self, df, cols, test_size):
         '''
@@ -97,9 +96,9 @@ class FeatureEng():
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = test_size,
                                                             random_state=self.__seed)
-        
+
         return X_train, X_test, y_train, y_test
-    
+
 
 class EDA():
     '''
@@ -120,7 +119,7 @@ class EDA():
             - col: (str) dataset column
             - kind: (str) plot kind
             - xlabel, ylabel: (str) axis labels
-            - path: (str) path for image storage 
+            - path: (str) path for image storage
         Output:
             - None
         '''

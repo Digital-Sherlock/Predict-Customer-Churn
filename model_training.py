@@ -11,20 +11,12 @@ predictions. Here's what functionality from churn_library it covers:
 Date: 2023-10-17
 Author: Vadim Polovnikov
 '''
-
 import os
-os.environ['QT_QPA_PLATFORM']='offscreen'
-
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import plot_roc_curve, classification_report
-from pathlib import Path
-import pandas as pd
 import numpy as np
-import shap # building and explaining graphs
-import joblib # saving scikit-learn models
+import joblib
 import matplotlib.pyplot as plt
+os.environ['QT_QPA_PLATFORM']='offscreen'
 
 
 class ModelOps():
@@ -57,10 +49,14 @@ class ModelOps():
 
         # generating a class report
         plt.rc('figure', figsize=(10, 7))
-        plt.text(0.01, 1.00, str(f'{model_name} Train'), {'fontsize': 10}, fontproperties = 'monospace')
-        plt.text(0.01, 0.70, str(classification_report(y_train, y_train_preds)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
-        plt.text(0.01, 0.55, str(f'{model_name} Test'), {'fontsize': 10}, fontproperties = 'monospace')
-        plt.text(0.01, 0.25, str(classification_report(y_test, y_test_preds)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
+        plt.text(0.01, 1.00, str(f'{model_name} Train'), {'fontsize': 10},
+                 fontproperties = 'monospace')
+        plt.text(0.01, 0.70, str(classification_report(y_train, y_train_preds)),
+                 {'fontsize': 10}, fontproperties = 'monospace')
+        plt.text(0.01, 0.55, str(f'{model_name} Test'), {'fontsize': 10},
+                 fontproperties = 'monospace')
+        plt.text(0.01, 0.25, str(classification_report(y_test, y_test_preds)),
+                 {'fontsize': 10}, fontproperties = 'monospace')
         plt.axis('off')
         class_report = PATH / f'class_report_{model_name}.png'
         plt.savefig(class_report, format='png', dpi='figure')
@@ -121,8 +117,8 @@ class ModelOps():
         '''
         plt.figure(figsize=(15, 8))
         ax = plt.gca()
-        model1_roc_curve = plot_roc_curve(model1, X_test, y_test, ax=ax, alpha=0.8)
-        model2_roc_curve = plot_roc_curve(model2, X_test, y_test, ax=ax, alpha=0.8)
+        plot_roc_curve(model1, X_test, y_test, ax=ax, alpha=0.8)
+        plot_roc_curve(model2, X_test, y_test, ax=ax, alpha=0.8)
         roc_curve = output_pth / 'ROC_Curve.png'
         plt.savefig(roc_curve, format='png', dpi='figure')
         plt.close()
