@@ -1,14 +1,14 @@
 from pathlib import Path
 
-PATH = 'data/bank_data.csv'
-CAT_COLUMNS = [
+path = 'data/bank_data.csv'
+cat_columns = [
         'Gender',
         'Education_Level',
         'Marital_Status',
         'Income_Category',
         'Card_Category'                
         ]
-KEEP_COLS = ['Customer_Age', 'Dependent_count',
+keep_cols = ['Customer_Age', 'Dependent_count',
        'Months_on_book', 'Total_Relationship_Count', 'Months_Inactive_12_mon',
        'Contacts_Count_12_mon', 'Credit_Limit', 'Total_Revolving_Bal',
        'Avg_Open_To_Buy', 'Total_Amt_Chng_Q4_Q1', 'Total_Trans_Amt',
@@ -25,5 +25,5 @@ KEEP_COLS = ['Customer_Age', 'Dependent_count',
        'Card_Category_Blue', 'Card_Category_Gold', 'Card_Category_Platinum',
        'Card_Category_Silver']
 
-IMAGES_PATH_EDA = Path() / "images" / "eda"
-IMAGES_PATH_RESULTS  = Path() / "images" / "results"
+images_path_eda = Path() / "images" / "eda"
+images_path_results  = Path() / "images" / "results"

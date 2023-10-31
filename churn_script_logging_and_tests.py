@@ -1,7 +1,11 @@
-import os
+'''
+Module for testing churn_library.py
+
+Author: Vadim Polovnikov
+Date: 2023-10-30
+'''
 import logging
 import pandas as pd
-# import churn_library_solution as cls
 
 
 logging.basicConfig(
@@ -126,5 +130,5 @@ if __name__ == "__main__":
 	test_perform_feature_engineering(cl.perform_feature_engineering, cl.df)
 
 	# testing train_models()
-	test_train_models(cl.train_models, cl.X_train, cl.X_test, 
+	test_train_models(cl.train_models, cl.x_train, cl.x_test, 
 				   cl.y_train, cl.y_test)

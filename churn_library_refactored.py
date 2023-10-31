@@ -7,41 +7,34 @@ presented in churn_library.py.
 Date: 2023-10-05
 Author: Vadim Polovnikov
 '''
-
-# importing modules
-from data_operations import ImportData
-from data_operations import FeatureEng
-from data_operations import EDA
-from pathlib import Path
-from model_training import ModelOps
-
-# importing constans
-from constants import PATH
-from constants import CAT_COLUMNS
-from constants import KEEP_COLS
-from constants import IMAGES_PATH_EDA, IMAGES_PATH_RESULTS
-
-# importing libraries
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
+from data_operations import ImportData
+from data_operations import FeatureEng
+from data_operations import EDA
+from model_training import ModelOps
+from constants import path
+from constants import cat_columns
+from constants import keep_cols
+from constants import images_path_eda, images_path_results
 
 
-def import_data(path):
+def import_data(filepath):
     '''
     Imports data from path
 
     Input:
-        - path: (str): dataset path
+        - filepath: (str): dataset path
     Output:
         - df: (pd.DataFrame) DataFrame
     '''
-    return ImportData(path).import_from_csv()
+    return ImportData(filepath).import_from_csv()
 
 
 # importing data
-df = import_data(PATH)
+df = import_data(path)
 
 # dropping extraneous column
 df.drop(labels="Unnamed: 0", axis='columns', inplace=True)
@@ -50,20 +43,20 @@ df.drop(labels="Unnamed: 0", axis='columns', inplace=True)
 df['Churn'] = df['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
 
 
-def perform_eda(col, type, filename, PATH=IMAGES_PATH_EDA, **kwargs):
+def perform_eda(col, type, filename, output_path=images_path_eda, **kwargs):
     '''
     Performs EDA and saves images.
     Input:
         - col: (str) column name
         - type: (str) plot type (library used for plotting)
         - filename: (str) image name
-        - PATH: (pathlib.PosixPath) path to save an image to
+        - output_path: (pathlib.PosixPath) path to save an image to
     Output:
      - None
     '''
     # plotting matplotlib plot
     if type == 'matplotlib':
-        plot = EDA(df, PATH)
+        plot = EDA(df, output_path)
         plot.mplotter(col=col,
                       kind=kwargs['kind'],
                       xlabel=kwargs['xlabel'],
@@ -71,20 +64,20 @@ def perform_eda(col, type, filename, PATH=IMAGES_PATH_EDA, **kwargs):
                       filename=filename)
     else:
     # plotting seaborn plot
-        plot = EDA(df, PATH)
+        plot = EDA(df, output_path)
         plot.splotter(kind=kwargs['kind'],
                       filename=filename,
                       col=col)
 
 
-def encode_helper(dataset, cat_columns=CAT_COLUMNS):
+def encode_helper(dataset, cat_columns=cat_columns):
     '''
     Encodes the categorical features.
     Input:
-        - df: (pd.DataFrame) dataframe
+        - dataset: (pd.DataFrame) dataframe
         - cat_columns: (lst) list of cat features
     Output:
-        - df: (pd.DataFrame) transformed df
+        - dataset: (pd.DataFrame) transformed df
     '''
     # onehot-encoding cat features
     encoded_cats = FeatureEng(dataset).onehot_encode(cat_columns)
@@ -103,89 +96,92 @@ def perform_feature_engineering(dataset):
     Encodes cat features, returns train-test split
     with selected columns in a dataset.
     Input:
-        - df: (pd.DataFrame) dataframe
+        - dataset: (pd.DataFrame) dataframe
     Output:
-        - X_train: (arr) X training data
-        - X_test: (arr) X testing data
-        - y_train: (arr) y training data
-        - y_test: (arr) y testing data
+        - x_train_arr: (arr) X training data
+        - x_test_arr: (arr) X testing data
+        - y_train_arr: (arr) y training data
+        - y_test_arr: (arr) y testing data
     '''
     # one-hot encoding data
-    dataset = encode_helper(dataset, CAT_COLUMNS)
+    dataset = encode_helper(dataset, cat_columns)
     # splitting the data
-    X_train, X_test, y_train, y_test = FeatureEng(dataset).data_splitter(
+    x_train_arr, x_test_arr, y_train_arr, y_test_arr = FeatureEng(dataset).data_splitter(
         dataset,
-        KEEP_COLS,
+        keep_cols,
         0.3
     )
-    return X_train, X_test, y_train, y_test
+    return x_train_arr, x_test_arr, y_train_arr, y_test_arr
 
 
-X_train, X_test, y_train, y_test = perform_feature_engineering(df)
+x_train, x_test, y_train, y_test = perform_feature_engineering(df)
 
 
-def classification_report_image(model, model_name, y_train, y_test,
+def classification_report_image(model, model_name, y_train_arr, y_test_arr,
                                 y_train_preds, y_test_preds,
-                                PATH=IMAGES_PATH_RESULTS):
-        '''
-        Produces classification report for training and testing results
-        and stores report as image in images folder.
-        Input:
-            - model_name: (str) name of the model
-            - y_train: training response values
-            - y_test:  test response values
-            - y_train_preds: training predictions
-            - y_test_preds: test predictions
-            - PATH: (pathlib.PosixPath) path to save an image to
-        Output:
-             None
-        '''
-        ModelOps(model).class_report(model_name,
-                                    y_train,
-                                    y_test,
-                                    y_train_preds,
-                                    y_test_preds,
-                                    PATH)
+                                path=images_path_results):
+    '''
+    Produces classification report for training and testing results
+    and stores report as image in images folder.
+    Input:
+        - model_name: (str) name of the model
+        - y_train_arr: training response values
+        - y_test_arr:  test response values
+        - y_train_preds: training predictions
+        - y_test_preds: test predictions
+        - path: (pathlib.PosixPath) path to save an image to
+    Output:
+            None
+    '''
+    ModelOps(model).class_report(model_name,
+                                 y_train_arr,
+                                 y_test_arr,
+                                 y_train_preds,
+                                 y_test_preds,
+                                 path)
 
 
-def plot_roc_curves(model1, model2, X_test, y_test,
+def plot_roc_curves(model1, model2, x_test_arr, y_test_arr,
                     output_pth):
     '''
     Generates a ROC curve and saves an image
     to a file.
     Input:
-        - model: model to plot the ROC curve for
-        - X_test: test dataset inputs
-        - y_test: test dataset labels
+        - model1, model2: model to plot the ROC curve for
+        - x_test_arr: test dataset inputs
+        - y_test_arr: test dataset labels
+        - output_pth: path to save the plots
     Output:
         - None
     '''
     ModelOps().roc_curve_generator(model1,
                                    model2,
-                                   X_test,
-                                   y_test,
+                                   x_test_arr,
+                                   y_test_arr,
                                    output_pth)
 
 
-def feature_importance(model, X, save_path):
+def feature_importance(model, x_data, save_path):
     '''
     Creates and stores the feature importances under the supplied path.
     Input:
-        - X: pandas dataframe of X values
+        - x_data: (pd.Dataframe) pandas dataframe of X values
+        - model: model to use for plotting
+        - save_path: (str) output path
     Output:
         - None
     '''
-    ModelOps(model).feature_importance(X, save_path)
+    ModelOps(model).feature_importance(x_data, save_path)
 
 
-def train_models(X_train, X_test, y_train, y_test):
+def train_models(x_train_arr, x_test_arr, y_train_arr, y_test_arr):
     '''
     The function trains models and saves the best ones.
     input:
-              X_train: X training data
-              X_test: X testing data
-              y_train: y training data
-              y_test: y testing data
+              x_train_arr: X training data
+              x_test_arr: X testing data
+              y_train_arr: y training data
+              y_test_arr: y testing data
     output:
               None
     '''
@@ -194,7 +190,7 @@ def train_models(X_train, X_test, y_train, y_test):
     lrc = LogisticRegression(solver='lbfgs', max_iter=3000)
 
     # defining the parameter grid
-    param_grid = { 
+    param_grid = {
     'n_estimators': [200, 500],
     'max_depth' : [4,5,100],
     'criterion' :['gini', 'entropy']
@@ -202,18 +198,18 @@ def train_models(X_train, X_test, y_train, y_test):
 
     # training rfc via GridSearchCV
     cv_rfc = GridSearchCV(estimator=rfc, param_grid=param_grid, cv=5)
-    cv_rfc.fit(X_train, y_train)
+    cv_rfc.fit(x_train_arr, y_train_arr)
 
     # training lrc
-    lrc.fit(X_train, y_train)
+    lrc.fit(x_train_arr, y_train_arr)
 
     # making predictions for rfc
-    y_train_preds_rf = cv_rfc.best_estimator_.predict(X_train)
-    y_test_preds_rf = cv_rfc.best_estimator_.predict(X_test)
+    y_train_preds_rf = cv_rfc.best_estimator_.predict(x_train_arr)
+    y_test_preds_rf = cv_rfc.best_estimator_.predict(x_test_arr)
 
     # making predictions for lrc
-    y_train_preds_lr = lrc.predict(X_train)
-    y_test_preds_lr = lrc.predict(X_test)
+    y_train_preds_lr = lrc.predict(x_train_arr)
+    y_test_preds_lr = lrc.predict(x_test_arr)
 
     # saving the best performing model(s)
     ModelOps(cv_rfc.best_estimator_).save_model('./models/rfc_model.pkl')
@@ -222,28 +218,28 @@ def train_models(X_train, X_test, y_train, y_test):
     # creating class report for both models
     classification_report_image(cv_rfc.best_estimator_,
                                 'Random Forest',
-                                y_train,
-                                y_test,
+                                y_train_arr,
+                                y_test_arr,
                                 y_train_preds_rf,
                                 y_test_preds_rf,
-                                PATH=IMAGES_PATH_RESULTS)
+                                path=images_path_results)
     classification_report_image(lrc, 'Logistic Regression',
-                                y_train,
-                                y_test,
+                                y_train_arr,
+                                y_test_arr,
                                 y_train_preds_lr,
                                 y_test_preds_lr,
-                                PATH=IMAGES_PATH_RESULTS)
+                                path=images_path_results)
 
     # generating a ROC curve
     plot_roc_curves(
-        model1=cv_rfc.best_estimator_, 
-        model2=lrc, 
-        X_test=X_test, 
-        y_test=y_test,
-        output_pth=IMAGES_PATH_RESULTS)
-    
+        model1=cv_rfc.best_estimator_,
+        model2=lrc,
+        x_test_arr=x_test_arr,
+        y_test_arr=y_test_arr,
+        output_pth=images_path_results)
+
     # generating feature importance'
-    feature_importance(cv_rfc.best_estimator_, X_train, IMAGES_PATH_RESULTS)
+    feature_importance(cv_rfc.best_estimator_, x_train_arr, images_path_results)
 
 
 if __name__ == '__main__':
@@ -259,12 +255,12 @@ if __name__ == '__main__':
                 kind='hist',
                 xlabel='Customers\' age',
                 ylabel='Number of Customers')
-    
+
     # edge case
     plt.figure(figsize=(10,7))
     plt.ylabel('Number of customers: normalized')
     df['Marital_Status'].value_counts('normalize').plot(kind='bar')
-    churn_marital_status_pth = IMAGES_PATH_EDA / 'churn_marital_status.png'
+    churn_marital_status_pth = images_path_eda / 'churn_marital_status.png'
     plt.savefig(churn_marital_status_pth, format='png', dpi='figure')
     plt.close()
 
@@ -276,6 +272,6 @@ if __name__ == '__main__':
                 type='sns',
                 kind='corr',
                 filename='corr_matrix.png')
-    
+
     # training models
-    train_models(X_train, X_test, y_train, y_test)
+    train_models(x_train, x_test, y_train, y_test)
