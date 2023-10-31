@@ -1,0 +1,9 @@
+2023-10-30 19:26:59,182 - root - INFO - Testing import_data(): successful data import.
+2023-10-30 19:26:59,196 - root - INFO - Testing test_encode_helper(): categories successfully encoded.
+2023-10-30 19:26:59,227 - root - INFO - Testing perform_feature_engineering(): feature engineering
+                     successfully performed.
+2023-10-30 19:26:59,424 - root - INFO - Testing perform_eda(): Plots have been successfully saved.
+2023-10-30 19:26:59,620 - root - INFO - Testing perform_eda(): Plots have been successfully saved.
+2023-10-30 19:26:59,899 - root - INFO - Testing perform_eda(): Plots have been successfully saved.
+2023-10-30 19:27:00,304 - root - INFO - Testing perform_eda(): Plots have been successfully saved.
+2023-10-30 19:28:19,872 - root - INFO - Testing train_models(): models have been succesfully trained.
