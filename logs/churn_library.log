@@ -1,0 +1,13 @@
+2023-10-30 19:13:27,817 - root - INFO - Testing import_data(): SUCCESS
+2023-10-30 19:13:28,948 - root - INFO - Testing perform_eda(): Histogram has been plotted (Churn)
+2023-10-30 19:13:29,997 - root - INFO - Testing perform_eda(): Histogram has been plotted (Customer_Age)
+2023-10-30 19:13:31,027 - root - INFO - Testing perform_eda(): Histogram has been plotted (Marital_Status)
+2023-10-30 19:13:32,050 - root - INFO - Testing perform_eda(): Histogram has been plotted (Total_Trans_Ct)
+2023-10-30 19:13:32,115 - root - INFO - Testing test_encoder_helper(): features succesfully transformed.
+2023-10-30 19:13:32,181 - root - INFO - Testing test_encoder_helper(): features succesfully transformed.
+2023-10-30 19:13:32,247 - root - INFO - Testing test_encoder_helper(): features succesfully transformed.
+2023-10-30 19:13:32,313 - root - INFO - Testing test_encoder_helper(): features succesfully transformed.
+2023-10-30 19:13:32,377 - root - INFO - Testing test_encoder_helper(): features succesfully transformed.
+2023-10-30 19:13:32,711 - root - INFO - Testing test_perform_feature_engineering():
+            Feature engineering succesfully performed.
+2023-10-30 19:14:56,893 - root - INFO - Testing train_models(): models have been succesfully trained.
